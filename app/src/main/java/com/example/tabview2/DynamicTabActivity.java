@@ -16,6 +16,10 @@ import android.text.Spanned;
 import android.text.style.ImageSpan;
 import android.view.WindowManager;
 
+import com.example.tabview2.FragmentOne;
+import com.example.tabview2.FragmentThree;
+import com.example.tabview2.FragmentTwo;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.tabs.TabLayout;
 
 import java.util.ArrayList;
@@ -43,7 +47,15 @@ public class DynamicTabActivity extends AppCompatActivity {
 
         // Prepare view pager
         prepareViewPager(viewPager);
+
+        BadgeDrawable badgeDrawable = tabLayout.getTabAt(0).getOrCreateBadge();
+        badgeDrawable.setVisible(true);
+
+        BadgeDrawable badgeDrawable2 = tabLayout.getTabAt(2).getOrCreateBadge();
+        badgeDrawable2.setNumber(678);
+        badgeDrawable.setVisible(true);
     }
+
     private void prepareViewPager(ViewPager viewPager) {
         // Initialize main adapter
         MainAdapter adapter=new MainAdapter(getSupportFragmentManager());
@@ -71,10 +83,17 @@ public class DynamicTabActivity extends AppCompatActivity {
         // set adapter
         viewPager.setAdapter(adapter);
     }
+
     private class MainAdapter extends FragmentPagerAdapter {
         // Initialize arrayList
         ArrayList<Fragment> fragments = new ArrayList<>();
         ArrayList<String> fragment_title =new ArrayList<>();
+
+        int[] imageList={
+                R.drawable.ic_baseline_favorite_24,
+                R.drawable.ic_baseline_add_24,
+                R.drawable.ic_baseline_color_lens_24
+        };
 
         // Create constructor
         public void addFragment(Fragment fragment,String s)
@@ -106,8 +125,22 @@ public class DynamicTabActivity extends AppCompatActivity {
         @Override
         public CharSequence getPageTitle(int position) {
 
+            // Initialize drawable
+            Drawable icon= ContextCompat.getDrawable(getApplicationContext()
+                    ,imageList[position]);
+
+            // set bound
+            icon.setBounds(0,0,icon.getIntrinsicWidth(),
+                    icon.getIntrinsicHeight());
+
             // Initialize spannable string
             SpannableString spannableString=new SpannableString("   "+ fragment_title.get(position));
+
+            // Initialize image span
+            ImageSpan imageSpan=new ImageSpan(icon,ImageSpan.ALIGN_CENTER);
+
+            // Set span
+            spannableString.setSpan(imageSpan,0,1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
             // return spannable string
             return spannableString;
